@@ -1,12 +1,13 @@
 // In a real application, these would call the actual API endpoints
 // For now, we'll return mock data
+import { apiClient } from "./api-client";
 
 export async function getReservations(params: any = {}) {
   // This would normally be:
-  // const response = await apiClient.get('/reservations/', { params })
-  // return response.data
+  const response = await apiClient.get("/reservations/", { params });
+  return response.data;
 
-  // Mock data for demonstration
+  // For demonstration purpose
   return [
     {
       id: 1,
@@ -58,12 +59,14 @@ export async function getReservations(params: any = {}) {
       guest_name: "Michael Brown",
       room_number: "402",
       room_type: "Standard King",
-      check_in_date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0], // Tomorrow
+      check_in_date: new Date(new Date().setDate(new Date().getDate() + 1))
+        .toISOString()
+        .split("T")[0], // Tomorrow
       check_out_date: "2023-02-03",
       status: "confirmed",
       total_amount: 650,
     },
-  ]
+  ];
 }
 
 export async function getRecentReservations() {
@@ -75,7 +78,9 @@ export async function getRecentReservations() {
       reservation_number: "RES2301005",
       guest_name: "Michael Brown",
       room_number: "402",
-      check_in_date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0],
+      check_in_date: new Date(new Date().setDate(new Date().getDate() + 1))
+        .toISOString()
+        .split("T")[0],
       check_out_date: "2023-02-03",
       status: "confirmed",
     },
@@ -115,7 +120,7 @@ export async function getRecentReservations() {
       check_out_date: "2023-01-20",
       status: "checked_out",
     },
-  ]
+  ];
 }
 
 export async function getTodayArrivals() {
@@ -152,6 +157,5 @@ export async function getTodayArrivals() {
       status: "pending",
       nights: 2,
     },
-  ]
+  ];
 }
-

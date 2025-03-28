@@ -3,8 +3,8 @@
 
 export async function getRooms(params: any = {}) {
   // This would normally be:
-  // const response = await apiClient.get('/rooms/', { params })
-  // return response.data
+  const response = await apiClient.get("/rooms/", { params });
+  return response.data;
 
   // Mock data for demonstration
   const rooms = [
@@ -51,7 +51,15 @@ export async function getRooms(params: any = {}) {
       type: "Executive Suite",
       status: "reserved",
       price: 250,
-      features: ["King Bed", "Sofa", "Wi-Fi", "TV", "Mini Bar", "Balcony", "Jacuzzi"],
+      features: [
+        "King Bed",
+        "Sofa",
+        "Wi-Fi",
+        "TV",
+        "Mini Bar",
+        "Balcony",
+        "Jacuzzi",
+      ],
     },
     {
       id: 6,
@@ -60,7 +68,15 @@ export async function getRooms(params: any = {}) {
       type: "Executive Suite",
       status: "maintenance",
       price: 250,
-      features: ["King Bed", "Sofa", "Wi-Fi", "TV", "Mini Bar", "Balcony", "Jacuzzi"],
+      features: [
+        "King Bed",
+        "Sofa",
+        "Wi-Fi",
+        "TV",
+        "Mini Bar",
+        "Balcony",
+        "Jacuzzi",
+      ],
     },
     {
       id: 7,
@@ -69,7 +85,16 @@ export async function getRooms(params: any = {}) {
       type: "Presidential Suite",
       status: "available",
       price: 500,
-      features: ["King Bed", "Living Room", "Dining Area", "Wi-Fi", "TV", "Mini Bar", "Balcony", "Jacuzzi"],
+      features: [
+        "King Bed",
+        "Living Room",
+        "Dining Area",
+        "Wi-Fi",
+        "TV",
+        "Mini Bar",
+        "Balcony",
+        "Jacuzzi",
+      ],
     },
     {
       id: 8,
@@ -80,26 +105,31 @@ export async function getRooms(params: any = {}) {
       price: 150,
       features: ["King Bed", "Wi-Fi", "TV", "Mini Bar", "Balcony"],
     },
-  ]
+  ];
 
   // Apply filters
-  let filteredRooms = [...rooms]
+  let filteredRooms = [...rooms];
 
   if (params.status) {
-    filteredRooms = filteredRooms.filter((room) => room.status === params.status)
+    filteredRooms = filteredRooms.filter(
+      (room) => room.status === params.status
+    );
   }
 
   if (params.room_type) {
-    filteredRooms = filteredRooms.filter((room) => room.type.toLowerCase().includes(params.room_type.toLowerCase()))
+    filteredRooms = filteredRooms.filter((room) =>
+      room.type.toLowerCase().includes(params.room_type.toLowerCase())
+    );
   }
 
   if (params.search) {
-    const searchTerm = params.search.toLowerCase()
+    const searchTerm = params.search.toLowerCase();
     filteredRooms = filteredRooms.filter(
-      (room) => room.number.toLowerCase().includes(searchTerm) || room.type.toLowerCase().includes(searchTerm),
-    )
+      (room) =>
+        room.number.toLowerCase().includes(searchTerm) ||
+        room.type.toLowerCase().includes(searchTerm)
+    );
   }
 
-  return filteredRooms
+  return filteredRooms;
 }
-

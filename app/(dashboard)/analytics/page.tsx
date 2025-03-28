@@ -24,21 +24,23 @@ import {
   getOccupancyStats,
   getRevenueStats,
   getGuestStats,
-} from "@/services/analytics-service";
+} from "@/services/analytics-services";
+import { OccupancyStats, RevenueStats, GuestStats, OccupancyTimeSeriesItem, PaymentMethodStats } from "@/services/analytics-types";
 import { format, subDays } from "date-fns";
 import { Download, RefreshCw } from "lucide-react";
+import type { DateRange } from "react-day-picker";
 
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState("occupancy");
   const [isLoading, setIsLoading] = useState(true);
-  const [dateRange, setDateRange] = useState({
+  const [dateRange, setDateRange] = useState<DateRange>({
     from: subDays(new Date(), 30),
     to: new Date(),
   });
-  const [groupBy, setGroupBy] = useState("day");
-  const [occupancyData, setOccupancyData] = useState<any>(null);
-  const [revenueData, setRevenueData] = useState<any>(null);
-  const [guestData, setGuestData] = useState<any>(null);
+  const [groupBy, setGroupBy] = useState<"day" | "week" | "month">("day");
+  const [occupancyData, setOccupancyData] = useState<OccupancyStats | null>(null);
+  const [revenueData, setRevenueData] = useState<RevenueStats | null>(null);
+  const [guestData, setGuestData] = useState<GuestStats | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +113,7 @@ export default function AnalyticsPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-2 md:flex-row md:items-center">
           <DatePickerWithRange date={dateRange} onDateChange={setDateRange} />
-          <Select value={groupBy} onValueChange={setGroupBy}>
+          <Select value={groupBy} onValueChange={(value) => setGroupBy(value as "day" | "week" | "month")}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Group by" />
             </SelectTrigger>
@@ -181,7 +183,7 @@ function OccupancyReport({
   data,
   isLoading,
 }: {
-  data: any;
+  data: OccupancyStats | null;
   isLoading: boolean;
 }) {
   if (isLoading || !data) {
@@ -200,7 +202,7 @@ function OccupancyReport({
     );
   }
 
-  const chartData = data.time_series.map((item: any) => ({
+  const chartData = data.time_series.map((item: OccupancyTimeSeriesItem) => ({
     date: item.date,
     rate: item.occupancy_rate,
     rooms: item.occupied_rooms,
@@ -244,7 +246,7 @@ function OccupancyReport({
             yAxisKey="rate"
             categories={["rate"]}
             colors={["#2563eb"]}
-            valueFormatter={(value) => `${value}%`}
+            valueFormatter={(value: number) => `${value}%`}
             height={400}
           />
         </div>
@@ -253,7 +255,7 @@ function OccupancyReport({
   );
 }
 
-function RevenueReport({ data, isLoading }: { data: any; isLoading: boolean }) {
+function RevenueReport({ data, isLoading }: { data: RevenueStats | null; isLoading: boolean }) {
   if (isLoading || !data) {
     return (
       <Card>
@@ -310,7 +312,7 @@ function RevenueReport({ data, isLoading }: { data: any; isLoading: boolean }) {
             yAxisKey="revenue"
             categories={["revenue"]}
             colors={["#10b981"]}
-            valueFormatter={(value) => `$${value.toLocaleString()}`}
+            valueFormatter={(value: number) => `$${value.toLocaleString()}`}
             height={400}
           />
         </div>
@@ -318,7 +320,7 @@ function RevenueReport({ data, isLoading }: { data: any; isLoading: boolean }) {
           <h3 className="mb-4 text-lg font-medium">Payment Methods</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Object.entries(data.payment_methods).map(
-              ([method, info]: [string, any]) => (
+              ([method, info]: [string, PaymentMethodStats]) => (
                 <div key={method} className="rounded-lg border p-4">
                   <h4 className="font-medium capitalize">
                     {method.replace("_", " ")}
@@ -339,7 +341,7 @@ function RevenueReport({ data, isLoading }: { data: any; isLoading: boolean }) {
   );
 }
 
-function GuestReport({ data, isLoading }: { data: any; isLoading: boolean }) {
+function GuestReport({ data, isLoading }: { data: GuestStats | null; isLoading: boolean }) {
   if (isLoading || !data) {
     return (
       <Card>
@@ -453,7 +455,7 @@ function GuestReport({ data, isLoading }: { data: any; isLoading: boolean }) {
               yAxisKey="unique_guests"
               categories={["unique_guests"]}
               colors={["#8b5cf6"]}
-              valueFormatter={(value) => `${value}`}
+              valueFormatter={(value: number) => `${value}`}
               height={300}
             />
           </div>

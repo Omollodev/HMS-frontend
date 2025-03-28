@@ -1,60 +1,74 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { getRooms } from "@/services/room-service"
-import { BedDouble, Filter, Plus, Search } from "lucide-react"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getRooms } from "@/services/room-service";
+import { BedDouble, Filter, Plus, Search } from "lucide-react";
 
 export default function RoomsPage() {
-  const [rooms, setRooms] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [typeFilter, setTypeFilter] = useState("all")
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
 
   useEffect(() => {
     const fetchRooms = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         const data = await getRooms({
           status: statusFilter !== "all" ? statusFilter : undefined,
           room_type: typeFilter !== "all" ? typeFilter : undefined,
           search: searchTerm || undefined,
-        })
-        setRooms(data)
+        });
+        setRooms(data);
       } catch (error) {
-        console.error("Failed to fetch rooms:", error)
+        console.error("Failed to fetch rooms:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchRooms()
-  }, [statusFilter, typeFilter, searchTerm])
+    fetchRooms();
+  }, [statusFilter, typeFilter, searchTerm]);
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      available: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      available:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
       occupied: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-      maintenance: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+      maintenance:
+        "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
       cleaning: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-      reserved: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    }
-    return colors[status] || "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-  }
+      reserved:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+    };
+    return (
+      colors[status] ||
+      "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Rooms</h1>
-        <p className="text-muted-foreground">Manage hotel rooms, availability, and maintenance</p>
+        <p className="text-muted-foreground">
+          Manage hotel rooms, availability, and maintenance
+        </p>
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -136,7 +150,10 @@ export default function RoomsPage() {
                       <div className="absolute inset-0 flex items-center justify-center bg-primary/10">
                         <BedDouble className="h-10 w-10 text-primary" />
                       </div>
-                      <Badge className={`absolute top-2 right-2 capitalize ${getStatusColor(room.status)}`}>
+                      <Badge
+                        className={`absolute top-2 right-2 capitalize ${getStatusColor(
+                          room.status
+                        )}`}>
                         {room.status}
                       </Badge>
                     </div>
@@ -168,13 +185,14 @@ export default function RoomsPage() {
           <Card>
             <CardContent className="p-6">
               <div className="text-center py-6">
-                <p className="text-muted-foreground">Floor view is under development</p>
+                <p className="text-muted-foreground">
+                  Floor view is under development
+                </p>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
-

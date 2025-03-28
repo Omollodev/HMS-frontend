@@ -1,23 +1,33 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useMobile } from "@/hooks/use-mobile"
-import { BarChart3, BedDouble, Calendar, CreditCard, Home, Hotel, Menu, Settings, Users } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useMobile } from "@/hooks/use-mobile";
+import {
+  BarChart3,
+  BedDouble,
+  Calendar,
+  CreditCard,
+  Home,
+  Hotel,
+  Menu,
+  Settings,
+  Users,
+} from "lucide-react";
 
 interface NavItem {
-  title: string
-  href: string
-  icon: React.ReactNode
-  roles?: string[]
+  title: string;
+  href: string;
+  icon: React.ReactNode;
+  roles?: string[];
 }
 
 const navItems: NavItem[] = [
@@ -68,16 +78,18 @@ const navItems: NavItem[] = [
     icon: <Settings className="h-5 w-5" />,
     roles: ["admin", "manager"],
   },
-]
+];
 
 export default function Sidebar() {
-  const pathname = usePathname()
-  const { user } = useAuth()
-  const isMobile = useMobile()
-  const [open, setOpen] = useState(false)
+  const pathname = usePathname();
+  const { user } = useAuth();
+  const isMobile = useMobile();
+  const [open, setOpen] = useState(false);
 
   // Filter nav items based on user role
-  const filteredNavItems = navItems.filter((item) => !item.roles || item.roles.includes(user?.role || ""))
+  const filteredNavItems = navItems.filter(
+    (item) => !item.roles || item.roles.includes(user?.role || "")
+  );
 
   const NavLinks = () => (
     <>
@@ -90,11 +102,16 @@ export default function Sidebar() {
       <ScrollArea className="flex-1 px-2 py-4">
         <nav className="flex flex-col gap-1">
           {filteredNavItems.map((item) => (
-            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}>
               <Button
                 variant="ghost"
-                className={cn("w-full justify-start gap-2", pathname === item.href && "bg-secondary")}
-              >
+                className={cn(
+                  "w-full justify-start gap-2",
+                  pathname === item.href && "bg-secondary"
+                )}>
                 {item.icon}
                 {item.title}
               </Button>
@@ -103,14 +120,17 @@ export default function Sidebar() {
         </nav>
       </ScrollArea>
     </>
-  )
+  );
 
   if (isMobile) {
     return (
       <>
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden fixed left-4 top-4 z-40">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden fixed left-4 top-4 z-40">
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle menu</span>
             </Button>
@@ -120,13 +140,12 @@ export default function Sidebar() {
           </SheetContent>
         </Sheet>
       </>
-    )
+    );
   }
 
   return (
     <div className="hidden md:flex md:w-64 md:flex-col md:inset-y-0 border-r bg-card">
       <NavLinks />
     </div>
-  )
+  );
 }
-

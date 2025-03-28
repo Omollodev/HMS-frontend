@@ -1,31 +1,38 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
-import { getTodayArrivals } from "@/services/reservation-service"
-import { formatDate } from "@/lib/utils"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getTodayArrivals } from "@/services/reservation-service";
+import { formatDate } from "@/lib/utils";
 
 export default function UpcomingArrivals() {
-  const [arrivals, setArrivals] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [arrivals, setArrivals] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchArrivals = async () => {
       try {
-        const data = await getTodayArrivals()
-        setArrivals(data.slice(0, 5))
+        const data = await getTodayArrivals();
+        setArrivals(data.slice(0, 5));
       } catch (error) {
-        console.error("Failed to fetch today arrivals:", error)
+        console.error("Failed to fetch today arrivals:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchArrivals()
-  }, [])
+    fetchArrivals();
+  }, []);
 
   return (
     <Card>
@@ -48,7 +55,9 @@ export default function UpcomingArrivals() {
           </div>
         ) : arrivals.length === 0 ? (
           <div className="text-center py-6">
-            <p className="text-muted-foreground">No arrivals scheduled for today</p>
+            <p className="text-muted-foreground">
+              No arrivals scheduled for today
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -67,12 +76,14 @@ export default function UpcomingArrivals() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium">{arrival.guest_name}</p>
                   <p className="text-xs text-muted-foreground">
-                    Room: {arrival.room_number || "Not assigned"} • {arrival.nights}{" "}
-                    {arrival.nights === 1 ? "night" : "nights"}
+                    Room: {arrival.room_number || "Not assigned"} •{" "}
+                    {arrival.nights} {arrival.nights === 1 ? "night" : "nights"}
                   </p>
                 </div>
                 <div className="text-sm text-right">
-                  <p className="font-medium">{formatDate(arrival.check_in_date)}</p>
+                  <p className="font-medium">
+                    {formatDate(arrival.check_in_date)}
+                  </p>
                   <p className="text-xs text-muted-foreground">Check-in</p>
                 </div>
               </div>
@@ -82,10 +93,11 @@ export default function UpcomingArrivals() {
       </CardContent>
       <CardFooter>
         <Button asChild variant="outline" className="w-full">
-          <Link href="/reservations?filter=today_arrivals">View all arrivals</Link>
+          <Link href="/reservations?filter=today_arrivals">
+            View all arrivals
+          </Link>
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
-

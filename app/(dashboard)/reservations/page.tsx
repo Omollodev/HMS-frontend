@@ -1,70 +1,95 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
-import { getReservations } from "@/services/reservation-service"
-import { formatDate } from "@/lib/utils"
-import { CalendarPlus, Filter, Search } from "lucide-react"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getReservations } from "@/services/reservation-service";
+import { formatDate } from "@/lib/utils";
+import { CalendarPlus, Filter, Search } from "lucide-react";
 
 export default function ReservationsPage() {
-  const searchParams = useSearchParams()
-  const [reservations, setReservations] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [dateFilter, setDateFilter] = useState("all")
+  const searchParams = useSearchParams();
+  const [reservations, setReservations] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
 
-  const initialTab = searchParams.get("filter") === "today_arrivals" ? "arrivals" : "all"
+  const initialTab =
+    searchParams.get("filter") === "today_arrivals" ? "arrivals" : "all";
 
   useEffect(() => {
     const fetchReservations = async () => {
-      setIsLoading(true)
+      setIsLoading(true);
       try {
         const data = await getReservations({
           status: statusFilter !== "all" ? statusFilter : undefined,
           date_filter: dateFilter !== "all" ? dateFilter : undefined,
           search: searchTerm || undefined,
-        })
-        setReservations(data)
+        });
+        setReservations(data);
       } catch (error) {
-        console.error("Failed to fetch reservations:", error)
+        console.error("Failed to fetch reservations:", error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchReservations()
-  }, [statusFilter, dateFilter, searchTerm])
+    fetchReservations();
+  }, [statusFilter, dateFilter, searchTerm]);
 
   const getStatusBadge = (status: string) => {
     const variants: Record<string, string> = {
-      pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-      confirmed: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-      checked_in: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-      checked_out: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+      pending:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+      confirmed:
+        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+      checked_in:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      checked_out:
+        "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
       cancelled: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-      no_show: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-    }
+      no_show:
+        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+    };
 
-    return <Badge className={`capitalize ${variants[status] || ""}`}>{status.replace("_", " ")}</Badge>
-  }
+    return (
+      <Badge className={`capitalize ${variants[status] || ""}`}>
+        {status.replace("_", " ")}
+      </Badge>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">Reservations</h1>
-        <p className="text-muted-foreground">Manage hotel reservations, check-ins, and check-outs</p>
+        <p className="text-muted-foreground">
+          Manage hotel reservations, check-ins, and check-outs
+        </p>
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -126,7 +151,11 @@ export default function ReservationsPage() {
           <TabsTrigger value="departures">Today&apos;s Departures</TabsTrigger>
         </TabsList>
         <TabsContent value="all">
-          <ReservationsTable reservations={reservations} isLoading={isLoading} getStatusBadge={getStatusBadge} />
+          <ReservationsTable
+            reservations={reservations}
+            isLoading={isLoading}
+            getStatusBadge={getStatusBadge}
+          />
         </TabsContent>
         <TabsContent value="current">
           <ReservationsTable
@@ -140,7 +169,8 @@ export default function ReservationsPage() {
             reservations={reservations.filter(
               (r) =>
                 (r.status === "confirmed" || r.status === "pending") &&
-                new Date(r.check_in_date).toDateString() === new Date().toDateString(),
+                new Date(r.check_in_date).toDateString() ===
+                  new Date().toDateString()
             )}
             isLoading={isLoading}
             getStatusBadge={getStatusBadge}
@@ -150,7 +180,9 @@ export default function ReservationsPage() {
           <ReservationsTable
             reservations={reservations.filter(
               (r) =>
-                r.status === "checked_in" && new Date(r.check_out_date).toDateString() === new Date().toDateString(),
+                r.status === "checked_in" &&
+                new Date(r.check_out_date).toDateString() ===
+                  new Date().toDateString()
             )}
             isLoading={isLoading}
             getStatusBadge={getStatusBadge}
@@ -158,16 +190,20 @@ export default function ReservationsPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 interface ReservationsTableProps {
-  reservations: any[]
-  isLoading: boolean
-  getStatusBadge: (status: string) => React.ReactNode
+  reservations: any[];
+  isLoading: boolean;
+  getStatusBadge: (status: string) => React.ReactNode;
 }
 
-function ReservationsTable({ reservations, isLoading, getStatusBadge }: ReservationsTableProps) {
+function ReservationsTable({
+  reservations,
+  isLoading,
+  getStatusBadge,
+}: ReservationsTableProps) {
   if (isLoading) {
     return (
       <Card>
@@ -186,7 +222,7 @@ function ReservationsTable({ reservations, isLoading, getStatusBadge }: Reservat
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   if (reservations.length === 0) {
@@ -198,7 +234,7 @@ function ReservationsTable({ reservations, isLoading, getStatusBadge }: Reservat
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -219,10 +255,14 @@ function ReservationsTable({ reservations, isLoading, getStatusBadge }: Reservat
           <TableBody>
             {reservations.map((reservation) => (
               <TableRow key={reservation.id}>
-                <TableCell className="font-medium">{reservation.reservation_number}</TableCell>
+                <TableCell className="font-medium">
+                  {reservation.reservation_number}
+                </TableCell>
                 <TableCell>{reservation.guest_name}</TableCell>
                 <TableCell>
-                  {reservation.room_number || <span className="text-muted-foreground">Not assigned</span>}
+                  {reservation.room_number || (
+                    <span className="text-muted-foreground">Not assigned</span>
+                  )}
                 </TableCell>
                 <TableCell>{formatDate(reservation.check_in_date)}</TableCell>
                 <TableCell>{formatDate(reservation.check_out_date)}</TableCell>
@@ -238,6 +278,5 @@ function ReservationsTable({ reservations, isLoading, getStatusBadge }: Reservat
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }
-

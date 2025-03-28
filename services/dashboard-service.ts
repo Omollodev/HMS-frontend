@@ -1,6 +1,6 @@
-export async function getDashboardStats() {
-  // This would normally fetch from the backend API
-  // For now, we'll return mock data
+import { DashboardStats } from "./dashboard-types";
+
+export async function getDashboardStats(): Promise<DashboardStats> {
   return {
     occupancy: {
       rate: 72,
@@ -76,6 +76,5 @@ export async function getDashboardStats() {
         value: "5%",
       },
     },
-  }
+  };
 }
-
